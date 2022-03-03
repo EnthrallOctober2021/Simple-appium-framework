@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="AppiumSuite" >
+    <test name="Android" >
+        <classes>
+            <class name="tests.AndroidSettingAppTests"/>
+        </classes>
+    </test>
+</suite>
