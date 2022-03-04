@@ -1,9 +1,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="AppiumSuite" >
+
+<!--    io.selendroid.testapp-->
+<!--    io.selendroid.testapp.HomeScreenActivity-->
+
     <test name="Android" >
+        <parameter name="appPackage" value="com.android.settings"/>
+        <parameter name="appActivity" value="com.android.settings.Settings"/>
+        <parameter name="appPath" value="/Users/enam/IdeaProjects/Simple-mobile-framework/src/test/resources/apk/selendroid-test-app.apk"/>
         <classes>
             <class name="tests.AndroidSettingAppTests"/>
+            <class name="tests.SelendroidAppTests"/>
         </classes>
     </test>
 </suite>

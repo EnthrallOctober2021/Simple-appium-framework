@@ -10,6 +10,8 @@ public class AndroidSettingAppPages extends BaseUtils {
     //**** Locators ****//
     By searchHeader = MobileBy.id("com.android.settings:id/search_action_bar_title");
     By title = MobileBy.id("android:id/title");
+    By text = MobileBy.id("android:id/text1");
+    By searchBox = MobileBy.id("com.android.settings:id/search_action_bar");
 
 
 
@@ -19,8 +21,13 @@ public class AndroidSettingAppPages extends BaseUtils {
        waitForElement(searchHeader);
         return getText(searchHeader);
     }
-    public void tapOnSecond(){
 
+    public void tapOnText(){
+        tapWithText("Display", title);
+    }
+
+    public String getListText(){
+        return getAllElementText(title);
     }
 
 }

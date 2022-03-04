@@ -6,9 +6,6 @@ import io.appium.java_client.android.connection.ConnectionStateBuilder;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import static io.appium.java_client.touch.WaitOptions.waitOptions;
-import static io.appium.java_client.touch.offset.ElementOption.element;
+
 
 public class BaseUtils extends DriverManager {
 
 
-    public List<MobileElement> elementList(By by){
+    protected List<MobileElement> elementList(By by){
         return androidDriver.findElements(by);
     }
 
@@ -60,8 +57,8 @@ public class BaseUtils extends DriverManager {
                 .moveTo(PointOption.point(middleOfX, endYCoordinate)).release().perform();
     }
 
-    public void tapWithText(String text) {
-        List<MobileElement> elements = androidDriver.findElementsById("android:id/title");
+    protected void tapWithText(String text, By by) {
+        List<MobileElement> elements = androidDriver.findElements(by);
         for (MobileElement s : elements) {
             if (s.getText().equals(text)) {
                 s.click();
@@ -69,9 +66,9 @@ public class BaseUtils extends DriverManager {
         }
     }
 
-    public String getAllElementText() {
+    protected String getAllElementText(By by) {
         String s = "";
-        List<MobileElement> elements = androidDriver.findElementsById("android:id/text1");
+        List<MobileElement> elements = androidDriver.findElements(by);
         for (MobileElement el : elements) {
             s = el.getText();
             System.out.println(s);
@@ -79,34 +76,14 @@ public class BaseUtils extends DriverManager {
         return s;
     }
 
-    public List<String> getAllElementTextInList() {
+    protected List<String> getAllElementTextInList(By by) {
         List<String> list = new ArrayList<>();
-        List<MobileElement> elements = androidDriver.findElementsById("android:id/text1");
+        List<MobileElement> elements = androidDriver.findElements(by);
         for (MobileElement el : elements) {
             list.add(el.getText());
         }
         System.out.println(list);
         return list;
-    }
-
-    public boolean retryingFindClick(String text) {
-        boolean result = false;
-        int attempts = 0;
-        while (attempts < 2) {
-            try {
-                List<MobileElement> elements = androidDriver.findElementsById("android:id/title");
-                for (MobileElement s : elements) {
-                    if (s.getText().equals(text)) {
-                        s.click();
-                    }
-                }
-                result = true;
-                break;
-            } catch (StaleElementReferenceException e) {
-            }
-            attempts++;
-        }
-        return result;
     }
 
     public void setWifiOff() {
@@ -121,35 +98,37 @@ public class BaseUtils extends DriverManager {
         }
     }
 
-    public boolean checkBatteryStatus() {
-        androidDriver.getBatteryInfo();
-        return false;
+    //revisit
+    protected void checkBatteryStatus() {
+       androidDriver.executeScript("mobile:batteryInfo");
     }
 
-    public void openNotification() {
+    protected void openNotification() {
         androidDriver.openNotifications();
     }
 
-    public String getText(By by) {
+    protected String getText(By by) {
         MobileElement element = androidDriver.findElement(by);
         return element.getText();
     }
 
-    protected void tapJs(MobileElement element){
+    //revisit
+    protected void tapJs(By by){
+        MobileElement element = androidDriver.findElement(by);
         HashMap<String, Integer> points = new HashMap<>();
         points.put("x", element.getLocation().getX());
         points.put("y", element.getLocation().getY());
         androidDriver.executeScript("mobile: tap", points);
     }
 
-    public void tapOnElement(By by){
+    protected void tapOnElement(By by){
         MobileElement  element = androidDriver.findElement(by);
         element.click();
     }
 
-
-    public static void scrollToElement( String elementName, boolean scrollDown) {
-        String listID = ((RemoteWebElement) androidDriver.findElementByAndroidUIAutomator("new UiSelector().className(\"android.widget.ListView\")")).getId();
+    //revisit
+    public void scrollToElement( String elementName, boolean scrollDown) {
+        String listID = (androidDriver.findElementByAndroidUIAutomator("new UiSelector().className(\"android.widget.ListView\")")).getId();
         String direction;
         if (scrollDown) {
             direction = "down";
@@ -163,7 +142,7 @@ public class BaseUtils extends DriverManager {
         androidDriver.executeScript("mobile: scrollTo", scrollObject);
     }
 
-    public MobileElement scrollToElementByName(String elementName, String listId) {
+    protected MobileElement scrollToElementByName(String elementName, String listId) {
         return androidDriver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector()" +
                 ".resourceId(\"" + listId + "\"))" +
                 ".scrollIntoView(new UiSelector().text(\"" + elementName + "\"));");
@@ -171,7 +150,14 @@ public class BaseUtils extends DriverManager {
 
 
     //*** Wait actions *****//
-    public void waitForElement(By element) {
+    public void staticWait(int second){
+        try {
+            Thread.sleep(second * 1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    protected void waitForElement(By element) {
         WebDriverWait wait = new WebDriverWait(androidDriver, 10);
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(element));
     }

@@ -13,8 +13,6 @@ public class AndroidSettingAppTests extends BaseTest {
     public void testSearch() {
         Assert.assertEquals(pages.searchText(), "Search settings", "Wrong text");
         pages.scrollAndClick("System");
-        pages.checkBatteryStatus();
-        Assert.assertTrue(pages.checkBatteryStatus(), "status");
-
     }
+
 }
