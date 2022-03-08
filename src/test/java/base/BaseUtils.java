@@ -3,6 +3,7 @@ package base;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.connection.ConnectionStateBuilder;
+import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -57,6 +58,47 @@ public class BaseUtils extends DriverManager {
                 .moveTo(PointOption.point(middleOfX, endYCoordinate)).release().perform();
     }
 
+    public static void swipeLeft() {
+        Dimension dimensions = androidDriver.manage().window().getSize();
+        int Anchor = androidDriver.manage().window().getSize().getHeight() / 2;
+        Double screenWidthStart = dimensions.getWidth() * 0.8;
+        int scrollStart = screenWidthStart.intValue();
+        Double screenWidthEnd = dimensions.getWidth() * 0.2;
+        int scrollEnd = screenWidthEnd.intValue();
+
+        new TouchAction(androidDriver)
+                .press(PointOption.point(scrollStart, Anchor))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
+                .moveTo(PointOption.point(scrollEnd, Anchor))
+                .release().perform();
+    }
+
+    public static void swipeRight() {
+        Dimension dimensions = androidDriver.manage().window().getSize();
+        int Anchor = androidDriver.manage().window().getSize().getHeight() / 2;
+        Double screenWidthStart = dimensions.getWidth() * 0.2;
+        int scrollStart = screenWidthStart.intValue();
+        Double screenWidthEnd = dimensions.getWidth() * 0.8;
+        int scrollEnd = screenWidthEnd.intValue();
+
+        new TouchAction(androidDriver)
+                .press(PointOption.point(scrollStart, Anchor))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
+                .moveTo(PointOption.point(scrollEnd, Anchor))
+                .release().perform();
+    }
+
+    public void seekBar(By by, double percentile){
+        MobileElement seek_bar=androidDriver.findElement(by);
+        int startX=seek_bar.getLocation().getX();
+        int y=seek_bar.getLocation().getY();
+        int endX=seek_bar.getSize().getWidth();
+
+        TouchAction action=new TouchAction(androidDriver);
+        int moveTo=(int)(endX * percentile);
+        action.press(PointOption.point(startX, y)).moveTo(PointOption.point(moveTo,y)).release().perform();
+    }
+
     protected void tapWithText(String text, By by) {
         List<MobileElement> elements = androidDriver.findElements(by);
         for (MobileElement s : elements) {
@@ -64,6 +106,14 @@ public class BaseUtils extends DriverManager {
                 s.click();
             }
         }
+    }
+
+    protected void tapWithCoordinates(int x, int y){
+        TouchAction touchAction = new TouchAction(androidDriver);
+        touchAction.tap(PointOption.point(x, y))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
+                .perform();
+
     }
 
     protected String getAllElementText(By by) {
